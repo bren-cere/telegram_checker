@@ -1,8 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
-  // Add CORS headers for cross-origin requests
-  const response = NextResponse.next();
+  // Create a new response
+  const response = NextResponse.json({});
+  
+  // Add CORS headers
   response.headers.set('Access-Control-Allow-Origin', '*');
   response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
   response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
@@ -15,13 +17,27 @@ export async function GET(request: NextRequest) {
 
     // Validate parameters
     if (!userId || !channelId) {
-      return NextResponse.json({ error: "Missing required parameters: userId and channelId" }, { status: 400 })
+      return NextResponse.json({ error: "Missing required parameters: userId and channelId" }, { 
+        status: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        }
+      })
     }
 
     // Get bot token from environment variables
     const botToken = process.env.TELEGRAM_BOT_TOKEN
     if (!botToken) {
-      return NextResponse.json({ error: "Bot token not configured" }, { status: 500 })
+      return NextResponse.json({ error: "Bot token not configured" }, { 
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        }
+      })
     }
 
     try {
@@ -32,17 +48,38 @@ export async function GET(request: NextRequest) {
         userId,
         channelId,
         isMember,
+      }, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        }
       })
     } catch (error: any) {
       return NextResponse.json({ 
         error: error.message
-      }, { status: 400 });
+      }, { 
+        status: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        }
+      });
     }
   } catch (error: any) {
     console.error("Error checking membership:", error)
-    return NextResponse.json({ error: error.message || "Failed to check membership" }, { status: 500 })
+    return NextResponse.json({ error: error.message || "Failed to check membership" }, { 
+      status: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      }
+    })
   }
 }
+
 
 async function checkMembership(botToken: string, userId: string, channelId: string): Promise<boolean> {
   try {
